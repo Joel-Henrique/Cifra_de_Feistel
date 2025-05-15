@@ -2,13 +2,11 @@ tamanho_bloco = 64
 rodadas = 16
 tamanho_bloco_divisao = tamanho_bloco // 2
 K = "133457799BBCDFF1"
-
+#6B5AB032706A1DDA
 def transforma_em_blocos_64bits(texto_hex):
     binario = hexadecimal_para_binario(texto_hex)
-
     while len(binario) % tamanho_bloco != 0:
         binario += '0'
-
     blocos = [binario[i:i+tamanho_bloco] for i in range(0, len(binario), tamanho_bloco)]
     return blocos
 
@@ -54,34 +52,39 @@ def xorLR(left, right):
             Newright += '1' 
     return Newright
 
+def gera_subchaves(chave_inicial_bin):
+    chaves = []
+    chave_atual = chave_inicial_bin
+    for _ in range(rodadas):
+        chave_atual = shift_chaveK_pra_direita(chave_atual)
+        chaves.append(chave_atual)
+    return chaves
 
 if __name__ == "__main__":
     chaveK = hexadecimal_para_binario(K)
     print(f"\nChave hexadecimal em binário: {chaveK}")
     blocos_processados = []
-    texto_entrada = input("Digite um texto em hexadecimal: ").strip()
+    texto_entrada = input("Digite o texto cifrado em hexadecimal: ").strip()
 
     try:
         blocos = transforma_em_blocos_64bits(texto_entrada)
+        subchaves = gera_subchaves(chaveK)
+        subchaves.reverse()
 
         print(f"\nBlocos de {tamanho_bloco} bits:")
         for i, bloco in enumerate(blocos):
             left, right = divide_em_dois_blocos(bloco)
             print(f"\nBloco {i + 1}:")
             print(f"Binário completo:  {bloco}")
-            print(f"Esquerda ({tamanho_bloco_divisao} bits): {left} ({int(left, 2)})")
-            print(f"Direita  ({tamanho_bloco_divisao} bits): {right} ({int(right, 2)})")
-            print(f"Esquerda em Hex: {binario_para_hexadecimal(left)}")
-            print(f"Direita em Hex:  {binario_para_hexadecimal(right)}")
-
-            chave_local = chaveK  
+            print(f"Esquerda ({tamanho_bloco_divisao} bits): {left}")
+            print(f"Direita  ({tamanho_bloco_divisao} bits): {right}")
 
             for rodada in range(rodadas):
-                chave_local = shift_chaveK_pra_direita(chave_local)
-                aux_right = right
-                right = funcaoF(right, chave_local)
-                right = xorLR(left, right)
-                left = aux_right
+                chave_local = subchaves[rodada]
+                aux_left = left
+                left = funcaoF(left, chave_local)
+                left = xorLR(right, left)
+                right = aux_left
                 print(f"Rodada {rodada + 1}: Left: {left} Right: {right}")
 
             blocox = junta_em_um_bloco(left, right)
@@ -105,7 +108,6 @@ if __name__ == "__main__":
 
         print(f"\nTodos blocos finais concatenados em BINÁRIO:\n{bloco_final_bin_total}")
         print(f"\nTodos blocos finais concatenados em HEXADECIMAL:\n{bloco_final_hex_total}")
-
 
     except ValueError:
         print("Erro: entrada inválida. Digite apenas caracteres hexadecimais (0-9, A-F).")
