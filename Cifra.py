@@ -1,6 +1,6 @@
 tamanho_bloco = 64
 rodadas = 16
-tamanho_bloco_divisao = tamanho_bloco // 2 
+tamanho_bloco_divisao = tamanho_bloco // 2
 K = "133457799BBCDFF1"
 
 def transforma_em_blocos_64bits(texto_hex):
@@ -28,9 +28,30 @@ def hexadecimal_para_binario(texto_hex):
 def remove_8bit(chaveK):
     NewchaveK_56 = ''
     for i in range(tamanho_bloco):
-        if (i + 1) % 8 != 0:  
+        if (i + 1) % 8 != 0:
             NewchaveK_56 += chaveK[i]
     return NewchaveK_56
+
+def shift_chaveK_pra_direita(chaveK):
+    shiftchaveK = ''
+    shiftchaveK = chaveK[-1]
+    faz_shift = chaveK[:-1]
+    shiftchaveK += faz_shift
+    # print(f"chave: {chaveK}")
+    #print(f"nova chave: {shiftchaveK}")
+    return shiftchaveK
+
+def funcaoF(left, chaveK):
+    Newright = ''
+    for i in range(len(left)):
+        if left[i] == chaveK[i]:
+            Newright += '0' 
+        else:
+            Newright += '1' 
+
+    #print(Newright)
+    return Newright
+
 
 if __name__ == "__main__":
     chaveK = hexadecimal_para_binario(K)
@@ -51,6 +72,11 @@ if __name__ == "__main__":
             print(f"Direita  ({tamanho_bloco_divisao} bits): {right} ({int(right, 2)})")
             print(f"Esquerda em Hex: {binario_para_hexadecimal(left)}")
             print(f"Direita em Hex:  {binario_para_hexadecimal(right)}")
+
+            for i in range(rodadas):
+                 chaveK = shift_chaveK_pra_direita(chaveK)
+                 right = funcaoF(right, chaveK)
+
 
 
     except ValueError:
