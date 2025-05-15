@@ -25,9 +25,18 @@ def hexadecimal_para_binario(texto_hex):
     binario = binario.zfill(len(texto_hex) * 4)
     return binario
 
+def remove_8bit(chaveK):
+    NewchaveK_56 = ''
+    for i in range(tamanho_bloco):
+        if (i + 1) % 8 != 0:  
+            NewchaveK_56 += chaveK[i]
+    return NewchaveK_56
+
 if __name__ == "__main__":
     chaveK = hexadecimal_para_binario(K)
     print(f"\nChave hexadecimal em binário: {chaveK}")
+    chaveK = remove_8bit(chaveK)
+    print(f"\nChave hexadecimal em binário 56: {chaveK}\n")
     texto_entrada = input("Digite um texto em hexadecimal: ").strip()
 
     try:
