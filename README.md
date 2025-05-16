@@ -20,9 +20,12 @@
     Quando solicitado, insira um texto hexadecimal:
     Digite um texto em hexadecimal: 0123456789ABCDEF
     Saída esperada: 6B5AB032706A1DDA
-    
+
     para decriptar siga os mesmos passos só que executando 
         python decriptação.py
 
     Digite o texto cifrado em hexadecimal: 6B5AB032706A1DDA
     Saída esperada: 0123456789ABCDEF
+
+
+![alt text](image.png)
